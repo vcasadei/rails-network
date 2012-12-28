@@ -19,6 +19,13 @@ describe User do
   it { should respond_to(:admin) }
   it { should respond_to(:authenticate) }
   it { should respond_to(:posts) } 
+  it { should respond_to(:relationships) }
+  it { should respond_to(:followed_users) }
+  it { should respond_to(:reverse_relationships) }
+  it { should respond_to(:followers) }
+  it { should respond_to(:following?) }
+  it { should respond_to(:follow!) }
+  it { should respond_to(:unfollow!) }
   it { should respond_to(:cpf) }
   it { should respond_to(:gender) }
   it { should respond_to(:city) }
@@ -137,27 +144,49 @@ describe User do
       FactoryGirl.create(:post, user: @user, created_at: 1.hour.ago)
     end
 
+
     describe "status" do
       let(:unfollowed_post) do
         FactoryGirl.create(:post, user: FactoryGirl.create(:user))
+      end
+      let(:followed_user) { FactoryGirl.create(:user) }
+
+      before do
+        @user.follow!(followed_user)
+        3.times { followed_user.posts.create!(content: "Lorem ipsum") }
       end
 
       its(:feed) { should include(newer_post) }
       its(:feed) { should include(older_post) }
       its(:feed) { should_not include(unfollowed_post) }
-    end
-
-    it "should have the right posts in the right order" do
-      @user.posts.should == [newer_post, older_post]
-    end
-
-    it "should destroy associated posts" do
-      posts = @user.posts.dup
-      @user.destroy
-      posts.should_not be_empty
-      posts.each do |post|
-        Post.find_by_id(post.id).should be_nil
+      its(:feed) do
+        followed_user.posts.each do |post|
+          should include(post)
+        end
       end
+    end
+  end
+
+  describe "following" do
+    let(:other_user) { FactoryGirl.create(:user) }    
+    before do
+      @user.save
+      @user.follow!(other_user)
+    end
+
+    it { should be_following(other_user) }
+    its(:followed_users) { should include(other_user) }
+
+    describe "followed user" do
+      subject { other_user }
+      its(:followers) { should include(@user) }
+    end
+
+    describe "and unfollowing" do
+      before { @user.unfollow!(other_user) }
+
+      it { should_not be_following(other_user) }
+      its(:followed_users) { should_not include(other_user) }
     end
   end
 end
