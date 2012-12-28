@@ -1,10 +1,25 @@
 <% provide(:title, 'All users') %>
 <h1>All users</h1>
 
+  <div class="row">
+    <div class="span20 offset4">
+
+      <%= form_tag users_path, :method => 'get', :id => "users_search", :class => "form-search" do %>
+        <p>
+          <%= text_field_tag :search, params[:search], :class => "input-medium search-query" %>
+          <%= submit_tag "Search", :name => nil  , class: "btn" %>
+
+        </p>
+    </div>
+  </div>
+
+  <% end %>
+
 <%= will_paginate %>
 
-<ul class="users">
-  <%= render @users %>
-</ul>
+    <div id="users">
+      <%= render @users %>
+    </div>
 
 <%= will_paginate %>
+

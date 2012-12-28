@@ -3,27 +3,29 @@
 
 <div class="row">
   <div class="span20 offset4">
+
+   
   
     <%= form_for(@user) do |f| %>
     <%= render 'shared/error_messages', object: f.object %>
 
       <%= f.label :name %>
-      <%= f.text_field :name %>
+      <%= f.text_field :name, :placeholder => 'Ex.: Jonas A. Jones...' %>
 
       <%= f.label :email %>
-      <%= f.text_field :email %>
+      <%= f.text_field :email, :placeholder => 'Ex.: jones@example.com' %>
 
       <%= f.label :cpf %>
-      <%= f.text_field :cpf %>
+      <%= f.text_field :cpf, :placeholder => 'Ex.: 382.256.838-80' %>
 
       <%= f.label :gender %>
-      <%= f.text_field :gender %>
+      <%= f.text_field :gender, :placeholder => 'Male/Female' %>
 
       <%= f.label :city %>
-      <%= f.text_field :city %>
+      <%= f.text_field :city, :placeholder => 'Ex.: NY' %>
 
       <%= f.label :state %>
-      <%= f.text_field :state %>
+      <%= f.text_field :state, :placeholder => 'Ex.: Florida' %>
 
       <%= f.label :password %>
       <%= f.password_field :password %>
