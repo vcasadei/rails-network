@@ -2,25 +2,36 @@
   <%= render 'shared/error_messages', object: f.object %>
   <div class="field">
   	<% option = rand(1..5) %>
+    <% name = current_user.name.split(' ') %>
+    <% if name.length > 1 %>
+
+      <% first_name = name[0] %>
+
+    <% else %>
+
+      <% first_name = name %>
+
+    <% end -%>
+
   	<% if option == 1 %>
 
-  		<% @message = "What are you thinking "  + current_user.name + "?" %>
+  		<% @message = "What are you thinking "  + first_name + "?" %>
 
 	  	<% elsif option == 2 %>
 
-	  		<% @message = "Welcome to RailsNetwork "  + current_user.name %>
+	  		<% @message = "Welcome to RailsNetwork "  + first_name + "!" %>
 
 	  	<% elsif option == 3 %>
 
-	  		<% @message = "How are you "  + current_user.name + "?" %>
+	  		<% @message = "How are you "  + first_name + "?" %>
 
 	  	<% elsif option == 4 %>
 
-	  		<% @message = "What are you doing "  + current_user.name + "?" %>
+	  		<% @message = "What are you doing "  + first_name + "?" %>
 
 	  	<% elsif option == 5 %>
 
-	  		<% @message = "Say something "  + current_user.name %>
+	  		<% @message = "Say something "  + first_name %>
 
   	<% end -%>
   		
