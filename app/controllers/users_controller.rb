@@ -24,7 +24,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
     if @user.save
-      sign_in @User
+      sign_in @user
       flash[:success] = "Welcome to RailsNetwork " + @user.name + "!"
       redirect_to @user
     else
@@ -32,6 +32,7 @@ class UsersController < ApplicationController
       render 'new'
     end
   end
+
 
 
   def edit
