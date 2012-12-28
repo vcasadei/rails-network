@@ -1,6 +1,7 @@
 class User < ActiveRecord::Base
   attr_accessible :email, :name, :cpf, :gender, :city, :state, :birthdate, :password, :password_confirmation
   has_secure_password
+  has_many :posts, dependent: :destroy
 
   before_save { |user| user.email = user.email.downcase }
   before_save :create_remember_token
@@ -14,6 +15,11 @@ class User < ActiveRecord::Base
 
   validates :password, length: { minimum: 6 }
   validates :password_confirmation, presence: true
+
+  def feed
+    # This is preliminary. See "Following users" for the full implementation.
+    Post.where("user_id = ?", id)
+  end
 
   private
 
