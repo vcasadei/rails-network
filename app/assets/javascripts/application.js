@@ -12,6 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require jquery-ui
 //= require bootstrap
 //= require_tree .
 
@@ -26,3 +27,10 @@ $(function() {
     return false;
   });
 });
+
+
+    $(function() {
+        $( ".datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
+    });
+
+
