@@ -31,6 +31,7 @@ class UsersController < ApplicationController
   def create
     @user = User.new(params[:user])
     if @user.save
+      UserMailer.registration_confirmation(@user).deliver  
       sign_in @user
       flash[:success] = "Welcome to RailsNetwork " + @user.name + "!"
       redirect_to @user
@@ -49,6 +50,7 @@ class UsersController < ApplicationController
   def update
     # @user = User.find(params[:id])
     if @user.update_attributes(params[:user])
+      UserMailer.edit_confirmation(@user).deliver  
       flash[:success] = @user.name + ", profile updated!"
       sign_in @user
       redirect_to @user

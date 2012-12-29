@@ -8,6 +8,7 @@ class RelationshipsController < ApplicationController
       format.html { redirect_to @user }
       format.js
     end
+    UserMailer.follow_confirmation(@user, current_user).deliver
   end
 
   def destroy
@@ -17,5 +18,9 @@ class RelationshipsController < ApplicationController
       format.html { redirect_to @user }
       format.js
     end
+    UserMailer.unfollow_confirmation(@user, current_user).deliver
   end
+
+
+
 end
