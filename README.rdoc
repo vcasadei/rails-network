@@ -10,6 +10,9 @@ Para começar o projeto, rode o comando
 
 Isso criará as databases. É necessário também instalar as Gem`s, por meio do comando
 
+{<img src="http://www.kasadei.com.br/wp-content/themes/kasadei1/images/facebook.png">}[http://www.kasadei.com.br/wp-content/themes/kasadei1/images/facebook.png]
+
+
   bundle install
 
 Por fim, caso deseje migrar as informações do banco, deve-se executar
