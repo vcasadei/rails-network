@@ -4,7 +4,7 @@ Neste projeto foi desenvolvida uma Rede Social em Rails. Nesta rede social foram
 
 Neste projeto foi utilizado MySQL como Banco de Dados. Os nomes dos Bancos de dados (com configuração disponível em <tt>config/database.yml</tt>) são <tt>rails_network_{database, test, production}</tt> para o banco em si, o teste e produção.
 
-Para começar o projeto, rode o comando
+Para criar o banco da aplicação, rode o comando
 
   rake db:create
 
@@ -12,7 +12,7 @@ Isso criará as databases. É necessário também instalar as Gem`s, por meio do
 
   bundle install
 
-Por fim, caso deseje migrar as informações do banco, deve-se executar
+Por fim, migre as informações do banco
 
   rake db:migrate
 
@@ -51,6 +51,7 @@ Estes posts são exibidos na timeline dos usuários que são donos deles e tamb�
 
 * Register, Login/Logout, Search, Follow/UnFollow
 Este projeto possui as funcionalidades de Cadastro de novos usuários, login, logout e edição do cadastro. A partir do momento que o usuário está logado no sistema, este pode Pesquisar por outros usuários, por meio de uma função de pesquisa implementada e dar "Follow" ou "UnFollow" em usuários do sistema.
+A ação follow/unfollow ficou um pouco lenta pois a partir desta é lançado um e-mail de notificação e o protocolo de envio acabou deixando a operação um pouco lenta.
 
 * Mailer
 Quando um usuário segue outro, o usuário que recebe a ação recebe uma notificação no e-mail cadastrado informando que ele está sendo seguido e é indicado o link do perfil de seu novo seguidor. O mesmo acontece quando um usuário deixa de seguir outro.
@@ -61,7 +62,7 @@ Quando um usuário é registrado este recebe também uma notificação em seu e-
 Existem duas classes de usuário: O usuário comum e o administrador. Este último só pode ser cadastrado diretamente no banco e possui a funcionalidade de Exclusão de um perfil de usuário.
 
 * Posts
-Um usuário pode criar um post em sua timeline e pode também deletar o seu post.
+Um usuário pode criar um post em sua timeline e pode também deletar o seu post. Ao criar o post, mensagens personalizadas são mostradas como forma de interação com o usuário.
 
 * Token de Login
 Uma vez logado no sistema, um usuário possui um Token salvo no navegador, portanto, ao menos que clique em Logout, este permanecerá logado ao sistema.
