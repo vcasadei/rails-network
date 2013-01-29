@@ -1,261 +1,116 @@
-== Welcome to Rails
+== Rails Network - A Rails Based Network
 
-Rails is a web-application framework that includes everything needed to create
-database-backed web applications according to the Model-View-Control pattern.
+Neste projeto foi desenvolvida uma Rede Social em Rails. Nesta rede social foram utilizadas diversas Gem`s, em específico, a interface (design) foi criada utilizando a gem <tt>bootstrap-sass</tt>, versão 2.1.
 
-This pattern splits the view (also called the presentation) into "dumb"
-templates that are primarily responsible for inserting pre-built data in between
-HTML tags. The model contains the "smart" domain objects (such as Account,
-Product, Person, Post) that holds all the business logic and knows how to
-persist themselves to a database. The controller handles the incoming requests
-(such as Save New Account, Update Product, Show Post) by manipulating the model
-and directing data to the view.
+Neste projeto foi utilizado MySQL como Banco de Dados. Os nomes dos Bancos de dados (com configuração disponível em <tt>config/database.yml</tt>) são <tt>rails_network_{database, test, production}</tt> para o banco em si, o teste e produção.
 
-In Rails, the model is handled by what's called an object-relational mapping
-layer entitled Active Record. This layer allows you to present the data from
-database rows as objects and embellish these data objects with business logic
-methods. You can read more about Active Record in
-link:files/vendor/rails/activerecord/README.html.
+Para começar o projeto, rode o comando
 
-The controller and view are handled by the Action Pack, which handles both
-layers by its two parts: Action View and Action Controller. These two layers
-are bundled in a single package due to their heavy interdependence. This is
-unlike the relationship between the Active Record and Action Pack that is much
-more separate. Each of these packages can be used independently outside of
-Rails. You can read more about Action Pack in
-link:files/vendor/rails/actionpack/README.html.
+  rake db:create
 
+Isso criará as databases. É necessário também instalar as Gem`s, por meio do comando
 
-== Getting Started
+  bundle install
 
-1. At the command prompt, create a new Rails application:
-       <tt>rails new myapp</tt> (where <tt>myapp</tt> is the application name)
+Por fim, caso deseje migrar as informações do banco, deve-se executar
 
-2. Change directory to <tt>myapp</tt> and start the web server:
-       <tt>cd myapp; rails server</tt> (run with --help for options)
+  rake db:migrate
 
-3. Go to http://localhost:3000/ and you'll see:
-       "Welcome aboard: You're riding Ruby on Rails!"
+O projeto pode ser rodado no server com o comando
 
-4. Follow the guidelines to start developing your application. You can find
-the following resources handy:
+  rails s
 
-* The Getting Started Guide: http://guides.rubyonrails.org/getting_started.html
-* Ruby on Rails Tutorial Book: http://www.railstutorial.org/
+== Modelos de usuário e funcionalidades
 
+1. Modelo de Usuários e Relacionamentos
 
-== Debugging Rails
+O modelo de usuário criado possui os seguintes dados: Nome, Email, CPF, Gênero, Cidade, Estado, Aniversário, Senha. Onde o Email é utilizado como sua identificação única no Sistema.
+  attr_accessible :email, :name, :cpf, :gender, :city, :state, :birth, :password, :password_confirmation
 
-Sometimes your application goes wrong. Fortunately there are a lot of tools that
-will help you debug it and get it back on the rails.
+Um usuário possui Posts, estes similares a outras redes sociais, como Facebook ou Twitter, que ficam armazenados em sua Timeline.
+O relacionamento entre usuários é realizado da forma Follow/Followed, portanto, não temos amigos, mas sim seguidores (semelhante ao modelo do microblog Twitter), este tipo de relacionamento foi escolhido devido a simplificações que traz ao projeto.
+  has_many :posts, dependent: :destroy
+  has_many :relationships, foreign_key: "follower_id", dependent: :destroy
+  has_many :followed_users, through: :relationships, source: :followed
+  has_many :reverse_relationships, foreign_key: "followed_id",
+                                   class_name: "Relationship",
+                                   dependent: :destroy
+  has_many :followers, through: :reverse_relationships, source: :follower
 
-First area to check is the application log files. Have "tail -f" commands
-running on the server.log and development.log. Rails will automatically display
-debugging and runtime information to these files. Debugging info will also be
-shown in the browser on requests from 127.0.0.1.
+Algumas restrições foram realizadas, como a verificação de unicidade de e-mail, validade de e-mail e CPF e comprimento de senha. Isto pode ser conferido no Model User.
 
-You can also log your own messages directly into the log file from your code
-using the Ruby logger class from inside your controllers. Example:
+2. Modelo de Posts
+O modelo de posts é um sistema de publicações, no qual o tamanho máximo de uma publicação é 800 caracteres. Cada post possui um conteúdo e pertence a um usuário.
 
-  class WeblogController < ActionController::Base
-    def destroy
-      @weblog = Weblog.find(params[:id])
-      @weblog.destroy
-      logger.info("#{Time.now} Destroyed Weblog ID ##{@weblog.id}!")
-    end
-  end
+Estes posts são exibidos na timeline dos usuários que são donos deles e também os posts dos usuários que são seguidos.
 
-The result will be a message in your log file along the lines of:
+  attr_accessible :content
+  belongs_to :user
 
-  Mon Oct 08 14:22:29 +1000 2007 Destroyed Weblog ID #1!
+3. Funcionalidades Básicas
 
-More information on how to use the logger is at http://www.ruby-doc.org/core/
+* Register, Login/Logout, Search, Follow/UnFollow
+Este projeto possui as funcionalidades de Cadastro de novos usuários, login, logout e edição do cadastro. A partir do momento que o usuário está logado no sistema, este pode Pesquisar por outros usuários, por meio de uma função de pesquisa implementada e dar "Follow" ou "UnFollow" em usuários do sistema.
 
-Also, Ruby documentation can be found at http://www.ruby-lang.org/. There are
-several books available online as well:
+* Mailer
+Quando um usuário segue outro, o usuário que recebe a ação recebe uma notificação no e-mail cadastrado informando que ele está sendo seguido e é indicado o link do perfil de seu novo seguidor. O mesmo acontece quando um usuário deixa de seguir outro.
 
-* Programming Ruby: http://www.ruby-doc.org/docs/ProgrammingRuby/ (Pickaxe)
-* Learn to Program: http://pine.fm/LearnToProgram/ (a beginners guide)
+Quando um usuário é registrado este recebe também uma notificação em seu e-mail cadastrado, com as informações sobre sua nova conta. Quando seu perfil é alterado, outra notificação semelhante é também enviada. As funções de Mailer podem ser encontradas em app/mailers.
 
-These two books will bring you up to speed on the Ruby language and also on
-programming in general.
+* Hierarquia de usuários
+Existem duas classes de usuário: O usuário comum e o administrador. Este último só pode ser cadastrado diretamente no banco e possui a funcionalidade de Exclusão de um perfil de usuário.
 
+* Posts
+Um usuário pode criar um post em sua timeline e pode também deletar o seu post.
 
-== Debugger
+* Token de Login
+Uma vez logado no sistema, um usuário possui um Token salvo no navegador, portanto, ao menos que clique em Logout, este permanecerá logado ao sistema.
 
-Debugger support is available through the debugger command when you start your
-Mongrel or WEBrick server with --debugger. This means that you can break out of
-execution at any point in the code, investigate and change the model, and then,
-resume execution! You need to install ruby-debug to run the server in debugging
-mode. With gems, use <tt>sudo gem install ruby-debug</tt>. Example:
+* Foto de Perfil
+Para simplificação, na foto de perfil foi utilizado o sistema externo Gravatar. O usuário pode alterar a imagem associada a seu perfil por meio do site do Gravatar.
 
-  class WeblogController < ActionController::Base
-    def index
-      @posts = Post.all
-      debugger
-    end
-  end
+* Segurança
+Para melhorar a segurança, é requerido no cadastro senha e confirmação de senha, além desta senha ser criptografada quando salva no banco. Para isto, foi utilizada a gem <tt>bcrypt-ruby</tt>, em sua versão 3.0.1.
 
-So the controller will accept the action, run the first line, then present you
-with a IRB prompt in the server window. Here you can do things like:
+== Testes
 
-  >> @posts.inspect
-  => "[#<Post:0x14a6be8
-          @attributes={"title"=>nil, "body"=>nil, "id"=>"1"}>,
-       #<Post:0x14a6620
-          @attributes={"title"=>"Rails", "body"=>"Only ten..", "id"=>"2"}>]"
-  >> @posts.first.title = "hello from a debugger"
-  => "hello from a debugger"
+Praticamente todas as funcionalidades foram testadas. Para isto foi utilizada da gem <tt>rspec-rails(2.11.0)</tt>, <tt>factory_girl_rails(4.1.0)</tt> e <tt>capybara(1.1.2)</tt>.
 
-...and even better, you can examine how your runtime objects actually work:
+Foram, ao todo, implementados ____ testes. Estes podem ser conferidos em spec.
 
-  >> f = @posts.first
-  => #<Post:0x13630c4 @attributes={"title"=>nil, "body"=>nil, "id"=>"1"}>
-  >> f.
-  Display all 152 possibilities? (y or n)
+Para popular o Banco para testes no sistema, deve-se rodar os seguintes comandos
 
-Finally, when you're ready to resume execution, you can enter "cont".
+  Comandos de teste aqui
 
+Com estes comandos, o sistema será populado com usuários de exemplo, com login example-{1 - 99}@example.com. Um usuário admin também é criado. Seu e-mail é <tt>example@example.com</tt> e sua senha é <tt>foobar</tt>.
 
-== Console
+  name: "Example User",
+  email: "example@example.com",
+  cpf: "392.839.838-80",
+  gender: "male",
+  city: "Sorocaba",
+  state: "SP",
+  password: "foobar",
+  password_confirmation: "foobar"
 
-The console is a Ruby shell, which allows you to interact with your
-application's domain model. Here you'll have all parts of the application
-configured, just like it is when the application is running. You can inspect
-domain models, change values, and save to the database. Starting the script
-without arguments will launch it in the development environment.
+== Melhorias
 
-To start the console, run <tt>rails console</tt> from the application
-directory.
+1. Poderiam ser realizados mais testes principalmente em relação ao envio de notificações de e-mail e a parte de pesquisa de usuários, que não foram propriamente testadas.
 
-Options:
+2. Faltou ser implementado um sistema de Comunicação entre usuários, ou seja, um sistema de mensagens. Tentei implementar este sistema mas não tive tempo suficiente para deixá-lo funcional.
 
-* Passing the <tt>-s, --sandbox</tt> argument will rollback any modifications
-  made to the database.
-* Passing an environment name as an argument will load the corresponding
-  environment. Example: <tt>rails console production</tt>.
+3. Poderia ser facilmente migrado o sistema de foto de perfil do Gravatar para o sistema desenvolvido, isto fica como uma melhoria.
 
-To reload your controllers and models after launching the console run
-<tt>reload!</tt>
+4. Telas de eventos ou comunidades poderiam ser criadas também com um pouco de trabalho, mas melhorariam ainda mais a aplicação.
 
-More information about irb can be found at:
-link:http://www.rubycentral.org/pickaxe/irb.html
+5. Poderia ser implementada também a funcionalidade de Galeria de Fotos, mas esta traria uma complexidade extra
 
+== Considerações
 
-== dbconsole
+Todas os erros testados foram tratados e procurei fazer um sistema ao menos utilizável.
 
-You can go to the command line of your database directly through <tt>rails
-dbconsole</tt>. You would be connected to the database with the credentials
-defined in database.yml. Starting the script without arguments will connect you
-to the development database. Passing an argument will connect you to a different
-database, like <tt>rails dbconsole production</tt>. Currently works for MySQL,
-PostgreSQL and SQLite 3.
+Não tive muito tempo e não tive um resultado final que gostaria realmente, pretendia ter feito mais, entretanto, devido ao final do meu semestre de aulas ter ficado para Janeiro, estou apurado com datas e não tive muito tempo para investir neste projeto.
 
-== Description of Contents
+Utilizei muito fóruns e a internet de forma geral para a busca de informações. O curso de Rails também foi muito útil, além das dicas dadas.
 
-The default directory structure of a generated Ruby on Rails application:
-
-  |-- app
-  |   |-- assets
-  |       |-- images
-  |       |-- javascripts
-  |       `-- stylesheets
-  |   |-- controllers
-  |   |-- helpers
-  |   |-- mailers
-  |   |-- models
-  |   `-- views
-  |       `-- layouts
-  |-- config
-  |   |-- environments
-  |   |-- initializers
-  |   `-- locales
-  |-- db
-  |-- doc
-  |-- lib
-  |   `-- tasks
-  |-- log
-  |-- public
-  |-- script
-  |-- test
-  |   |-- fixtures
-  |   |-- functional
-  |   |-- integration
-  |   |-- performance
-  |   `-- unit
-  |-- tmp
-  |   |-- cache
-  |   |-- pids
-  |   |-- sessions
-  |   `-- sockets
-  `-- vendor
-      |-- assets
-          `-- stylesheets
-      `-- plugins
-
-app
-  Holds all the code that's specific to this particular application.
-
-app/assets
-  Contains subdirectories for images, stylesheets, and JavaScript files.
-
-app/controllers
-  Holds controllers that should be named like weblogs_controller.rb for
-  automated URL mapping. All controllers should descend from
-  ApplicationController which itself descends from ActionController::Base.
-
-app/models
-  Holds models that should be named like post.rb. Models descend from
-  ActiveRecord::Base by default.
-
-app/views
-  Holds the template files for the view that should be named like
-  weblogs/index.html.erb for the WeblogsController#index action. All views use
-  eRuby syntax by default.
-
-app/views/layouts
-  Holds the template files for layouts to be used with views. This models the
-  common header/footer method of wrapping views. In your views, define a layout
-  using the <tt>layout :default</tt> and create a file named default.html.erb.
-  Inside default.html.erb, call <% yield %> to render the view using this
-  layout.
-
-app/helpers
-  Holds view helpers that should be named like weblogs_helper.rb. These are
-  generated for you automatically when using generators for controllers.
-  Helpers can be used to wrap functionality for your views into methods.
-
-config
-  Configuration files for the Rails environment, the routing map, the database,
-  and other dependencies.
-
-db
-  Contains the database schema in schema.rb. db/migrate contains all the
-  sequence of Migrations for your schema.
-
-doc
-  This directory is where your application documentation will be stored when
-  generated using <tt>rake doc:app</tt>
-
-lib
-  Application specific libraries. Basically, any kind of custom code that
-  doesn't belong under controllers, models, or helpers. This directory is in
-  the load path.
-
-public
-  The directory available for the web server. Also contains the dispatchers and the
-  default HTML files. This should be set as the DOCUMENT_ROOT of your web
-  server.
-
-script
-  Helper scripts for automation and generation.
-
-test
-  Unit and functional tests along with fixtures. When using the rails generate
-  command, template test files will be generated for you and placed in this
-  directory.
-
-vendor
-  External libraries that the application depends on. Also includes the plugins
-  subdirectory. If the app has frozen rails, those gems also go here, under
-  vendor/rails/. This directory is in the load path.
+Gostei muito de desenvolver este projeto pois aprendi muito de Rails e tive que lidar com muitos problemas, os quais fui capaz de superar. Acredito que isto me trouxe muita experiência prática no assunto e espero poder aprimorar esta experiência em outros projetos.
