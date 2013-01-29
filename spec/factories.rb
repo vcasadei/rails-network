@@ -2,8 +2,6 @@ FactoryGirl.define do
   factory :user do
     sequence(:name)  { |n| "Person #{n}" }
     sequence(:email) { |n| "person_#{n}@example.com"} 
-    # name     "Michael Hartl"
-    # email    "michael@example.com"
     cpf      "392.838.982-80"
     gender   "male"
     city     "Sorocaba"

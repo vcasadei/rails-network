@@ -9,7 +9,7 @@ end
 
 def make_users
   admin = User.create!(name: "Example User",
-                 email: "example@railstutorial.org",
+                 email: "example@example.com",
                  cpf: "392.839.838-80",
                  gender: "male",
                  city: "Sorocaba",
@@ -19,7 +19,7 @@ def make_users
     admin.toggle!(:admin)
   99.times do |n|
       name  = Faker::Name.name
-      email = "example-#{n+1}@railstutorial.org"
+      email = "example-#{n+1}@example.com"
       cpf = "392.839.838-80"
       gender = "male"
       city = "Sorocaba",

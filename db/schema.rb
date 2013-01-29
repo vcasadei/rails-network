@@ -13,39 +13,6 @@
 
 ActiveRecord::Schema.define(:version => 20121229132849) do
 
-  create_table "conversations", :force => true do |t|
-    t.string   "subject",    :default => ""
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
-  end
-
-  create_table "messages", :force => true do |t|
-    t.string   "content"
-    t.integer  "user_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  add_index "messages", ["user_id", "created_at"], :name => "index_messages_on_user_id_and_created_at"
-
-  create_table "notifications", :force => true do |t|
-    t.string   "type"
-    t.text     "body"
-    t.string   "subject",              :default => ""
-    t.integer  "sender_id"
-    t.string   "sender_type"
-    t.integer  "conversation_id"
-    t.boolean  "draft",                :default => false
-    t.datetime "updated_at",                              :null => false
-    t.datetime "created_at",                              :null => false
-    t.integer  "notified_object_id"
-    t.string   "notified_object_type"
-    t.string   "notification_code"
-    t.string   "attachment"
-  end
-
-  add_index "notifications", ["conversation_id"], :name => "index_notifications_on_conversation_id"
-
   create_table "posts", :force => true do |t|
     t.string   "content"
     t.integer  "user_id"

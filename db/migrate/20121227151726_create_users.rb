@@ -7,7 +7,6 @@ class CreateUsers < ActiveRecord::Migration
       t.string :gender
       t.string :city
       t.string :state
-      t.date :birth
 
       t.timestamps
     end

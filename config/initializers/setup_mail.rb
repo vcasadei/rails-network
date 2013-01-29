@@ -2,8 +2,8 @@ ActionMailer::Base.smtp_settings = {
   :address              => "smtp.gmail.com",  
   :port                 => 587,  
   :domain               => "kasadei.com.br",  
-  :user_name            => "vitor.casadei@gmail.com",  
-  :password             => "V1t0rC4s4d3123111992",  
+  :user_name            => "railsnetwork@gmail.com",  
+  :password             => "r41ln3tw0rk",  
   :authentication       => "plain",  
   :enable_starttls_auto => true  
 }  

@@ -76,11 +76,16 @@ Para melhorar a segurança, é requerido no cadastro senha e confirmação de se
 
 Praticamente todas as funcionalidades foram testadas. Para isto foi utilizada da gem <tt>rspec-rails(2.11.0)</tt>, <tt>factory_girl_rails(4.1.0)</tt> e <tt>capybara(1.1.2)</tt>.
 
-Foram, ao todo, implementados ____ testes. Estes podem ser conferidos em spec.
+Foram, ao todo, implementados 147 testes. Estes podem ser conferidos em spec.
 
 Para popular o Banco para testes no sistema, deve-se rodar os seguintes comandos
 
-  Comandos de teste aqui
+  rake db:populate
+
+Para rodar os testes deve-se chamar o Rspec, por meio do comando
+
+  bundle exec rake spec
+
 
 Com estes comandos, o sistema será populado com usuários de exemplo, com login example-{1 - 99}@example.com. Um usuário admin também é criado. Seu e-mail é <tt>example@example.com</tt> e sua senha é <tt>foobar</tt>.
 
